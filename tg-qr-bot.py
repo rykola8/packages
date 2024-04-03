@@ -20,11 +20,14 @@
 # 
 # 8. Modificē kodu lai QR koda teksts ģenerētos no tā ko ievadīja lietotājs (apskati /echo komandu)
 
+
+
+import qrcode
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 
 # izveido bota pieslēgumu Telegram
-app = ApplicationBuilder().token("YOUR_TOKEN").build()
+app = ApplicationBuilder().token("5867819362:AAHITF0lNxnCLiDutgmrMwawZNwN-vl03Ww").build()
 
 # komanda /start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -33,7 +36,14 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 # komanda /hello
 async def hello(update: Update, context: ContextTypes.DEFAULT_TYPE):
     print(update.effective_user)
+    update.message.reply_photo('')
     await update.message.reply_text(f'Hello {update.effective_user.first_name} {update.effective_user.last_name}')
+
+# komanda /qrcode
+async def qr_code(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    img = qrcode.make(update.message.text.replace("/qrcode ", ""))
+    img.save("some_file.png")
+    await update.message.reply_photo("some_file.png")
 
 # komanda /echo
 async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
@@ -43,6 +53,7 @@ async def echo(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
 app.add_handler(CommandHandler("start", start))
 app.add_handler(CommandHandler("hello", hello))
 app.add_handler(CommandHandler("echo", echo))
+app.add_handler(CommandHandler("qrcode", qr_code))
 
 # sāk bota darbību
 app.run_polling()
